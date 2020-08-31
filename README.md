@@ -24,8 +24,8 @@ The code is given as support of the paper "Data-Driven Strategies for Predictive
 * This pickle file is a pandas dataframe, where the header contains: ExpID (the name of the cycles), all the features, label. All the following rows contans the cycles' data.   
 
 ## Code
-# In each notebook the header reports the description of how to use it. 
-# All the notebooks relying on cycle data assume that the data are stored in the data/ folder.
+### In each notebook the header reports the description of how to use it. 
+### All the notebooks relying on cycle data assume that the data are stored in the data/ folder.
 
 
 * 0-ValidationTestDivision: contains the jupyter notebook to compute the CAI Index.
