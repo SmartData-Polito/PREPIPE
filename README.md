@@ -4,7 +4,7 @@ BLINDED: A pipeline for predictive maintenance
 BLINDED is an advanced predictive maintenance pipeline evaluated in the automotive case study. 
 The code is given as support of the paper "Data-Driven Strategies for Predictive Maintenance: Lesson Learned from an Automotive Use Case" please refer to it for the main concepts. 
 
-![BLINDED Framework](BLINDEDFramework.png)
+![BLINDED Framework](BLINDED.png)
 
 ## Prerequisites
 
