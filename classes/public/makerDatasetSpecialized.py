@@ -1,3 +1,11 @@
+from vest.models.bivariate import BivariateVEST, multivariate_feature_extraction
+from vest.config.aggregation_functions \
+    import (SUMMARY_OPERATIONS_ALL,
+            SUMMARY_OPERATIONS_FAST,
+            SUMMARY_OPERATIONS_SMALL)
+
+import tsfel
+
 import pandas as pd
 import numpy as np
 
@@ -9,78 +17,110 @@ class MakerDatasetSpec:
         
         # example: minuteWindow = 2 -> 30 window/hour
         self.minuteWindow = minuteWindow
-        
         self.includeFiltering = includeFiltering
         self.n = n #outliers
         self.includeDerivate = True
     
-    def makeDataset(self, signals=False,features=False):
+    def makeDataset(self, signals=False,strategy="ad-hoc"):
+    
+        def adhoc(strategy):
+            
+            
+            self.features = strategy
+            if(strategy=="ad-hoc"):
+                self.features = self.signalsToFeatures(signals)            
+
+            featuresSpec = [] 
+            for var in self.features:
+                #print (var)
+                x = var.split(" ")
+                if len(x) == 2:
+                    x.append(False)
+                else:
+                    x[2] = True
+                featuresSpec.append(x)
+                signals.append(x[0])            
+
+            for feature in featuresSpec:
+                var = feature[0]
+                isDerivate = feature[2]
+                featureType = feature[1]
+
+                if(isDerivate == True):
+                    temp = ""
+                    if(self.includeFiltering == True):
+                        temp = self.filterOutliers(chunk[var].diff(), self.n)
+                    else:
+                        temp = chunk[var].diff()                   
+
+                    if featureType == "mean":
+                        w.append(np.nanmean(temp))
+                    elif featureType == "std":
+                        w.append(np.nanstd(temp))
+                    else:
+                        w.append(np.nanpercentile(temp,int(featureType)))
+                else:
+                    temp = ""
+                    if(self.includeFiltering == True):
+                        temp = self.filterOutliers(chunk[var], self.n)
+                    else:
+                        temp = chunk[var]
+
+                    if featureType == "mean":
+                        w.append(np.nanmean(temp))
+                    elif featureType == "std":
+                        w.append(np.nanstd(temp))
+                    else:
+                        w.append(np.nanpercentile(temp,int(featureType)))
+                            
+            return w
         
-        if(features==False):
-            self.features = self.signalsToFeatures(signals)
-        else:
-            self.features = features
         
         Id = []
         X = []
         Y = []
-        
-        featuresSpec = [] 
-        
-        for var in self.features:
-            #print (var)
-            x = var.split(" ")
-            if len(x) == 2:
-                x.append(False)
-            else:
-                x[2] = True
-            featuresSpec.append(x)
-            signals.append(x[0])
-        
 
         for j, row in self.files_list.iterrows():            
             file = row["cycleName"]
-            df = pd.read_csv(self.fpathCameoFiles + file+".csv",  encoding ="latin1", usecols = signals)
+            df = pd.read_csv(self.fpathCameoFiles + file,  encoding ="latin1", usecols = signals)
             
             chunks = self.makeChunks(df, int(df.shape[0]/(self.minuteWindow*60)))
             
             for chunk in chunks:
+                chunk = chunk.fillna(method='bfill')
+                #return chunk,"a","a"
                 w = []
-                for feature in featuresSpec:
-                    var = feature[0]
-                    isDerivate = feature[2]
-                    featureType = feature[1]
-                    
-                    if(isDerivate == True):
-                        temp = ""
-                        if(self.includeFiltering == True):
-                            temp = self.filterOutliers(chunk[var].diff(), self.n)
-                        else:
-                            temp = chunk[var].diff()                   
-
-                        if featureType == "mean":
-                            w.append(np.nanmean(temp))
-                        elif featureType == "std":
-                            w.append(np.nanstd(temp))
-                        else:
-                            w.append(np.nanpercentile(temp,int(featureType)))
-                    else:
-                        temp = ""
-                        if(self.includeFiltering == True):
-                            temp = self.filterOutliers(chunk[var], self.n)
-                        else:
-                            temp = chunk[var]
-                        
-                        if featureType == "mean":
-                            w.append(np.nanmean(temp))
-                        elif featureType == "std":
-                            w.append(np.nanstd(temp))
-                        else:
-                            w.append(np.nanpercentile(temp,int(featureType)))
+                if(strategy=="ad-hoc" or type(strategy) == list): w = adhoc(strategy)
+                elif(strategy=="tsfel-all" or strategy=="tsfel-all-corr"): 
+                    cfg = tsfel.get_features_by_domain()
+                    w = tsfel.time_series_features_extractor(cfg, chunk)   
+                    self.features = list(w.columns)
+                elif(strategy=="tsfel-statistical"): 
+                    cfg = tsfel.get_features_by_domain('statistical')
+                    w = tsfel.time_series_features_extractor(cfg, chunk)  
+                    self.features = list(w.columns)
+                elif(strategy=="tsfel-temporal"): 
+                    cfg = tsfel.get_features_by_domain('temporal')
+                    w = tsfel.time_series_features_extractor(cfg, chunk)  
+                    self.features = list(w.columns)
+                elif(strategy=="vest"): 
+                    model = BivariateVEST()
+                    features = model.extract_features(df, pairwise_transformations=False, summary_operators=SUMMARY_OPERATIONS_SMALL)
+                    w = multivariate_feature_extraction(df, apply_transform_operators=False, summary_operators=SUMMARY_OPERATIONS_SMALL)    
+                    self.features = list(w.columns)
+                
                 X.append(w)
                 Id.append(file)
                 Y.append(row['label'])        
-            
+        
+        
+        if(strategy=="tsfel-all-corr"):
+            dataset = pd.concat(X)
+            to_drop = tsfel.correlated_features(dataset)
+            dataset = dataset.drop(to_drop,axis=1)
+            self.features = dataset.columns
+            X = dataset
+                
             
         return np.array(X), np.array(Y), np.array(Id)
             
@@ -92,7 +132,7 @@ class MakerDatasetSpec:
         #return values
     
     def makeChunks(self, seq, num):
-   
+       
         avg = len(seq) / float(num)
         out = []
         last = 0.0
