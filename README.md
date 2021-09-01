@@ -9,6 +9,7 @@ The code is given as support of the paper "Data-Driven Strategies for Predictive
 ## Prerequisites
 
 * The jupyter notebooks run on Linux, with: Python 3.7, sklearn 0.22 pandas 0.25.3 numpy 1.17.4 numpy 1.4.1.
+* The feature extraction process runs on Linux, with: Python 3.7, vest-python, and tsfel.
 * The grid search notebooks run on Spark version 2.4.0-cdh6.2.1
 
 ## Data samples
@@ -42,7 +43,11 @@ The code is given as support of the paper "Data-Driven Strategies for Predictive
 
 * 5-ModelTrainingTuning: contains the jupyter notebooks to run the grid search performing either the k-fold cross validation or the time series cross validation in D1, and the hold out validation in D2. 
 
-* classes/parameters/ConfGenerator: is the  jupyter notebook to set the grid search space for each hyperparamter of the the tree, forest, svm classifier.
+* 6-DeepLearning: contains the jupyter notebooks to create and validate the deep learning models.
+
+* classes/parameters/ConfGenerator: is the jupyter notebook to set the grid search space for each hyperparamter of the the tree, forest, svm classifier.
+
+* classes/public/makerDatasetSpecialized: implements the cod for the different feature etraction strategies. 
 
 * Each step is used to create tabular datasets based on each step choices. 
 * Since BLINDED is based on a wrapping approach, to identify the best choice in each step (1,..,4) the created datasets have to be tested with the 5-ModelTrainingTuning notebook. 
