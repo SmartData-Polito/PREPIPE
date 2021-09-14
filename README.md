@@ -43,7 +43,7 @@ The code is given to support the paper "Data-Driven Strategies for Predictive Ma
 
 * 5-ModelTrainingTuning: contains the jupyter notebooks to run the grid search performing either the k-fold cross validation or the time series cross validation in D1 and the hold out validation in D2. 
 
-* 6-DeepLearning: contains the jupyter notebooks to create and validate the deep learning models.
+* 6-DeepLearning: contains the scripts to create and validate the deep learning models.
 
 * classes/parameters/ConfGenerator: the jupyter notebook creates the grid search space for each hyperparameter of the tree, forest, SVM classifier.
 
