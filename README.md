@@ -1,7 +1,7 @@
-PPREPIPE: PREdictive maintenance PIPEline
+PREPIPE: PREdictive maintenance PIPEline
 =========================================
 
-PPREPIPE is an advanced predictive maintenance pipeline evaluated in the automotive case study. 
+PREPIPE is an advanced predictive maintenance pipeline evaluated in the automotive case study. 
 The code is given to support the paper:
 
 > Danilo Giordano, Flavio Giobergia, Eliana Pastor, Antonio La Macchia,Tania Cerquitelli, Elena Baralis, Marco Mellia, Davide Tricarico, (2020), "Data-Driven Strategies for Predictive Maintenance: Lesson Learned from an Automotive Use Case", Computers in Industry.
