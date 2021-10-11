@@ -1,10 +1,13 @@
-BLINDED: A pipeline for predictive maintenance
+PPREPIE: PREdictive maintenance PIPEline
 =========================================
 
-BLINDED is an advanced predictive maintenance pipeline evaluated in the automotive case study. 
-The code is given to support the paper "Data-Driven Strategies for Predictive Maintenance: Lesson Learned from an Automotive Use Case" please refer to it for the main concepts. 
+PPREPIE is an advanced predictive maintenance pipeline evaluated in the automotive case study. 
+The code is given to support the paper:
 
-![BLINDED Framework](BLINDED.png)
+> Danilo Giordano, Flavio Giobergia, Eliana Pastor, Antonio La Macchia,Tania Cerquitelli, Elena Baralis, Marco Mellia, Davide Tricarico, (2020), "Data-Driven Strategies for Predictive Maintenance: Lesson Learned from an Automotive Use Case", Computers in Industry.
+please refer to it for the main concepts and for citation. 
+
+![PREPIPE Framework](PREPIPE.png)
 
 ## Prerequisites
 
@@ -50,7 +53,7 @@ The code is given to support the paper "Data-Driven Strategies for Predictive Ma
 * classes/public/makerDatasetSpecialized: implements the code for the different feature extraction strategies. 
 
 * Each step is used to create tabular datasets based on each step choice. 
-* Since BLINDED is based on a wrapping approach, to identify the best choice in each step (1,..,4), the created datasets must be tested with the 5-ModelTrainingTuning notebook. 
+* Since PREPIPE is based on a wrapping approach, to identify the best choice in each step (1,..,4), the created datasets must be tested with the 5-ModelTrainingTuning notebook. 
 * For the identification of the best choice for each step, in 5-ModelTrainingTuning/gridresult, we report the notebooks to analyze the grid search results of each step. 
 
 * As a grid search result, 5-ModelTrainingTuning/gridresult/1-SignalSelection/ reports two examples of grid search results for the 10-fold Cross Validation (CV) case and Time Series Cross Validation (TS) case. Please refer to the 5-ModelTrainingTuning/gridresult/README_Output.md for a complete overview of the output file.
